@@ -3,6 +3,8 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const connectDB = require("../config/db");
 const User = require("../models/User");
+const Product = require("../models/Product");
+const products = require("./products");
 
 const users = [
   {
@@ -33,8 +35,19 @@ const seed = async () => {
   // Passwords are hashed automatically by the User model's pre-save hook.
   await User.create(users);
 
+  await Product.deleteMany({ name: { $in: products.map((p) => p.name) } });
+
+  // Product.create() (not insertMany) so the pre-save slug-generation hook
+  // runs for each document.
+  await Product.create(products);
+
   console.log("Seed data created:");
   users.forEach((u) => console.log(`  - ${u.role.padEnd(5)} ${u.email} / ${u.password}`));
+
+  const categories = [...new Set(products.map((p) => p.category))];
+  console.log(
+    `\n${products.length} products created across ${categories.length} categories: ${categories.join(", ")}`
+  );
 
   await mongoose.disconnect();
   process.exit(0);

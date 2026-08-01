@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -10,6 +11,10 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Serves uploaded product images (see src/middleware/upload.js) at
+// /uploads/products/<filename> - the URL saved on Product.image/images.
+app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 if (process.env.NODE_ENV !== "test") {
   app.use(morgan("dev"));

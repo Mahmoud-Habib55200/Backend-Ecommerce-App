@@ -33,6 +33,17 @@ const errorHandler = (err, req, res, next) => {
     errors = [];
   }
 
+  // File upload errors from multer (see src/middleware/upload.js): wrong
+  // mime type, file too large, too many files, etc.
+  if (err.name === "MulterError") {
+    statusCode = 400;
+    message =
+      err.code === "LIMIT_UNEXPECTED_FILE"
+        ? "Only image files (jpeg, png, webp, gif) are allowed"
+        : err.message;
+    errors = [];
+  }
+
   if (process.env.NODE_ENV !== "production" && statusCode === 500) {
     console.error(err);
   }
