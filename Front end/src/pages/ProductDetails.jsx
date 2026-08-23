@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { fetchProductById, clearCurrentProduct } from "../store/productsSlice";
-import { addToCart } from "../store/cartSlice";
+import useAddToCart from "../hooks/useAddToCart";
 import { resolveProductImage } from "../utils/image";
-import { notifyAddedToCart } from "../utils/cartToast";
 
 const stockInfo = (countInStock) => {
   if (countInStock === 0) return { label: "Out of stock", dot: "bg-red-500", text: "text-red-700", bg: "bg-red-50" };
@@ -144,6 +143,7 @@ export default function ProductDetails() {
 
   const [activeImage, setActiveImage] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const handleAddToCart = useAddToCart();
 
   useEffect(() => {
     dispatch(fetchProductById(id));
@@ -159,10 +159,6 @@ export default function ProductDetails() {
     }
   }, [product]);
 
-  const handleAddToCart = () => {
-    dispatch(addToCart({ ...product, quantity }));
-    notifyAddedToCart(product.name);
-  };
 
   return (
     <div className="bg-slate-50">
@@ -337,7 +333,7 @@ export default function ProductDetails() {
                     <button
                       type="button"
                       disabled={product.countInStock === 0}
-                      onClick={handleAddToCart}
+                      onClick={() => handleAddToCart(product, quantity)}
                       className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-indigo-600 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none"
                     >
                       <svg

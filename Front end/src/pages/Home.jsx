@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchProducts } from "../store/productsSlice";
-import { addToCart } from "../store/cartSlice";
+import useAddToCart from "../hooks/useAddToCart";
 import { resolveProductImage } from "../utils/image";
-import { notifyAddedToCart } from "../utils/cartToast";
 import Pagination from "../components/Pagination";
 import BannerSlider from "../components/BannerSlider";
 import ShopByCategory from "../components/ShopByCategory";
@@ -24,6 +23,7 @@ export default function Home() {
     (state) => state.products,
   );
   const [currentPage, setCurrentPage] = useState(1);
+  const handleAddToCart = useAddToCart();
 
   useEffect(() => {
     dispatch(fetchProducts({ page: currentPage }));
@@ -110,10 +110,7 @@ export default function Home() {
                       type="button"
                       className="product-card-add-btn"
                       disabled={product.countInStock === 0}
-                      onClick={() => {
-                        dispatch(addToCart(product));
-                        notifyAddedToCart(product.name);
-                      }}
+                      onClick={() => handleAddToCart(product)}
                     >
                       {product.countInStock === 0 ? "Out of Stock" : "Add to Cart"}
                     </button>

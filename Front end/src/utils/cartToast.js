@@ -17,3 +17,9 @@ export const notifyAddedToCart = (productName) =>
     icon: "success",
     title: `${productName} added to cart`,
   });
+
+export const notifyCartError = (message) =>
+  cartToast.fire({
+    icon: "error",
+    title: message || "Couldn't update your cart",
+  });

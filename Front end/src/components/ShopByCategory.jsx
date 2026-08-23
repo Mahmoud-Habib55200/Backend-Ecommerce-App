@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../store/productsSlice";
-import { addToCart } from "../store/cartSlice";
+import useAddToCart from "../hooks/useAddToCart";
 import { getProducts } from "../api/products";
-import { notifyAddedToCart } from "../utils/cartToast";
 import ProductCard, { ProductCardSkeleton } from "./ProductCard";
 
 export default function ShopByCategory() {
   const dispatch = useDispatch();
   const categories = useSelector((state) => state.products.categories);
   const status = useSelector((state) => state.products.categoriesStatus);
+  const handleAddToCart = useAddToCart();
 
   const [selectedCategory, setSelectedCategory] = useState(null); // null = All
   const [products, setProducts] = useState([]);
@@ -43,11 +43,6 @@ export default function ShopByCategory() {
       cancelled = true;
     };
   }, [selectedCategory]);
-
-  const handleAddToCart = (product) => {
-    dispatch(addToCart(product));
-    notifyAddedToCart(product.name);
-  };
 
   if (status === "failed" || (status === "succeeded" && categories.length === 0)) {
     return null;

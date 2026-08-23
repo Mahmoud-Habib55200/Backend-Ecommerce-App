@@ -1,25 +1,20 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFeaturedProducts } from "../store/productsSlice";
-import { addToCart } from "../store/cartSlice";
-import { notifyAddedToCart } from "../utils/cartToast";
+import useAddToCart from "../hooks/useAddToCart";
 import ProductCard, { ProductCardSkeleton } from "./ProductCard";
 
 export default function FeaturedProducts() {
   const dispatch = useDispatch();
   const items = useSelector((state) => state.products.featuredItems);
   const status = useSelector((state) => state.products.featuredStatus);
+  const handleAddToCart = useAddToCart();
 
   useEffect(() => {
     if (status === "idle") {
       dispatch(fetchFeaturedProducts());
     }
   }, [status, dispatch]);
-
-  const handleAddToCart = (product) => {
-    dispatch(addToCart(product));
-    notifyAddedToCart(product.name);
-  };
 
   if (status === "failed" || (status === "succeeded" && items.length === 0)) {
     return null;

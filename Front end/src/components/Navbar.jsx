@@ -62,7 +62,7 @@ export default function Navbar() {
             </svg>
             <span>Favorites</span>
           </Link>
-          <Link to="/" className="navbar-link">
+          <Link to="/cart" className="navbar-link">
             <svg
               viewBox="0 0 24 24"
               width="18"
